@@ -41,13 +41,11 @@ class IDRange:
         return IDRange(int(start_str), int(end_str))
     
 try:
-    ranges = list(map(IDRange.from_string, input().split(',')))
-    invalid_ids = set()
-    invalid_ids_part2 = set()
-    for r in ranges:
-        invalid_ids.update(r.invalid_ids())
-        invalid_ids_part2.update(r.invalid_ids_part2())
-    print(sum(invalid_ids))
-    print(sum(invalid_ids_part2))
+    ranges = [IDRange.from_string(s) for s in input().split(',')]
+
+    part1 = sum(sum(r.invalid_ids()) for r in ranges)
+    part2 = sum(sum(r.invalid_ids_part2()) for r in ranges)
+    print(part1)
+    print(part2)
 except EOFError:
     pass
