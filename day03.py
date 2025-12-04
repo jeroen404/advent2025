@@ -11,7 +11,6 @@ def part1_max(capacities):
         if capacities[i] > max1:
             max1 = capacities[i]
             max2 = 0
-            # it would be better to find max2 in the end but who cares
             for j in range(i+1, len(capacities)):
                 if capacities[j] > max2:
                     max2 = capacities[j]
