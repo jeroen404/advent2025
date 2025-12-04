@@ -29,6 +29,7 @@ for instruction in instructions:
     elif instruction < 0:
         # Calculate crossings by comparing the integer block of start and end
         # We shift by -1 to handle the 0 boundary correctly for negative moves
+        # It comes from AI .. and somehow it works
         zeros += (pos - 1) // 100 - (new_pos - 1) // 100
 
     pos = new_pos % 100
