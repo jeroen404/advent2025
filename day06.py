@@ -64,7 +64,7 @@ for problem_index, stop_pos in enumerate(reversed(operator_positions)):
         if number_string:
             term = int(number_string)
             mathproblems[problem_index].add_term(term)
-    start_pos = stop_pos - 1
+    start_pos = stop_pos - 2
 # operator is left algned so there are no terms left
 
 results = [mp.solve() for mp in mathproblems]
