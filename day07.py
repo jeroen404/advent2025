@@ -25,18 +25,15 @@ for i, line in enumerate(tachyon_manifold[2:], start=2):
         if ch == '^' and tachyon_manifold[i-1][j] == '|':
             splits += 1
             if j > 0:
-                above_timeline = 0
+                timelines[i][j-1] += timelines[i-1][j]
                 if tachyon_manifold[i][j-1] != '|':
                     tachyon_manifold[i][j-1] = '|'
-                    above_timeline = timelines[i-1][j-1]
-                timelines[i][j-1] += timelines[i-1][j] + above_timeline
+                    timelines[i][j-1] += timelines[i-1][j-1]            
             if j < len(line) - 1:
-                above_timeline = 0
+                timelines[i][j+1] += timelines[i-1][j]
                 if tachyon_manifold[i][j+1] != '|':
                     tachyon_manifold[i][j+1] = '|'
-                    above_timeline = timelines[i-1][j+1]
-                timelines[i][j+1] += timelines[i-1][j] + above_timeline
-
+                    timelines[i][j+1] += timelines[i-1][j+1]
 # part 1
 print(splits)
 # part 2
