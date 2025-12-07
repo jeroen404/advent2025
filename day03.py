@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
+from functools import cache
 
-# without cahe 1 second, with 0.03 seconds
-cache = {}
 
 def part1_max(capacities):
     max1 = 0
@@ -16,11 +15,10 @@ def part1_max(capacities):
                     max2 = capacities[j]
     return max1 * 10 + max2
 
+@cache
 def part2_max(capacities,remaining_batteries) -> int:
     if remaining_batteries == 1:
         return max(capacities)
-    if (tuple(capacities), remaining_batteries) in cache:
-        return cache[(tuple(capacities), remaining_batteries)]
     bank_len = len(capacities)
     max_so_far = 0
     last_possible_start = bank_len - remaining_batteries + 1
@@ -30,8 +28,7 @@ def part2_max(capacities,remaining_batteries) -> int:
             next_max = part2_max(capacities[start_pos+1:], remaining_batteries-1)
             if next_max > max_so_far:
                 max_so_far = next_max
-    cache[(tuple(capacities), remaining_batteries)] = biggest_start * (10 ** (remaining_batteries - 1)) + max_so_far
-    return cache[(tuple(capacities), remaining_batteries)]
+    return biggest_start * (10 ** (remaining_batteries - 1)) + max_so_far
 
 banks = []
 try:
@@ -46,6 +43,6 @@ except EOFError:
 
 
 total_part1 = sum(part1_max(bank) for bank in banks)
-total_part2 = sum(part2_max(bank, 12) for bank in banks)
+total_part2 = sum(part2_max(tuple(bank), 12) for bank in banks)
 print(total_part1)
 print(total_part2)
