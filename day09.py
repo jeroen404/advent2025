@@ -115,16 +115,16 @@ for i in range(len(points)):
         area = rectangle.area()
         if area <= largest_area:
             continue
-        # Check if rectangle center is inside the polygon
-        # not needed for input but otherwise conclave polygons could cause issues
-        # makes it take twice as long though..
-        if not rectangle.center().inside_polygon(points):
-            continue
         intersects = False
         for line in lines:
             if line.has_point_inside(rectangle):
                 intersects = True
                 break
+        # Check if rectangle center is inside the polygon
+        # not needed for input but otherwise conclave polygons could cause issues
+        # makes it take twice as long though..
+        if not rectangle.center().inside_polygon(points):
+            continue
         if not intersects:
             if area > largest_area:
                 largest_area = area
