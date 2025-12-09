@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+
+
+class Point2D:    
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+    def area_with(self, other) -> int:
+        width = abs(self.x - other.x) + 1 # fat lines
+        height = abs(self.y - other.y) + 1
+        return width * height
+    def __eq__(self, other) -> bool:
+        return (self.x == other.x) and (self.y == other.y)
+    def __hash__(self) -> int:
+        return hash((self.x, self.y))
+    def __repr__(self) -> str:
+        return f"Point2D({self.x}, {self.y})"
+    @staticmethod
+    def from_string(s: str):
+        x_str, y_str = s.strip().split(',')
+        return Point2D(int(x_str), int(y_str))
+    
+class Line2D:
+    def __init__(self, p1: Point2D, p2: Point2D):
+        self.p1 = p1
+        self.p2 = p2
+    def has_point_inside(self, rectangle) -> bool:
+        min_x = min(self.p1.x, self.p2.x)
+        max_x = max(self.p1.x, self.p2.x)
+        min_y = min(self.p1.y, self.p2.y)
+        max_y = max(self.p1.y, self.p2.y)
+        return not (max_x <= rectangle.bottom_left.x or
+                    min_x >= rectangle.top_right.x or
+                    max_y <= rectangle.bottom_left.y or
+                    min_y >= rectangle.top_right.y)
+    def __repr__(self) -> str:
+        return f"Line2D({self.p1}, {self.p2})"
+
+class Rectangle2D:
+    def __init__(self, bottom_left: Point2D, top_right: Point2D):
+        #self.bottom_left = bottom_left
+        #self.top_right = top_right
+        self.bottom_left = Point2D(min(bottom_left.x, top_right.x), min(bottom_left.y, top_right.y))
+        self.top_right = Point2D(max(bottom_left.x, top_right.x), max(bottom_left.y, top_right.y))
+    def area(self) -> int:
+        width = abs(self.top_right.x - self.bottom_left.x) + 1  # fat lines
+        height = abs(self.top_right.y - self.bottom_left.y) + 1
+        return width * height
+    def __repr__(self) -> str:
+        return f"Rectangle2D({self.bottom_left}, {self.top_right})"
+
+points = []
+
+try:
+    while True:
+        line = input()
+        point = Point2D.from_string(line)
+        points.append(point)
+        print(f"Read point: {point}")
+except EOFError:
+    pass
+
+# part 1
+largest_area = 0
+for i in range(len(points)):
+    for j in range(i + 1, len(points)):
+        area = points[i].area_with(points[j])
+        if area > largest_area:
+            largest_area = area
+
+#print(Rectangle2D(Point2D(11,1), Point2D(2,5)).area())
+print(largest_area)
+
+# part 2
+lines = []
+for i, point in enumerate(points[:-1]):
+    line = Line2D(point, points[i+1])
+    lines.append(line)
+lines.append(Line2D(points[-1], points[0]))
+
+print("Lines:")
+for line in lines:
+    print(line)
+
+largest_area = 0
+largest_i = -1
+largest_j = -1
+for i in range(len(points)):
+    for j in range(i + 1, len(points)):
+        rectangle = Rectangle2D(points[i], points[j])
+        intersects = False
+        for line in lines:
+            if line.has_point_inside(rectangle):
+                intersects = True
+                break
+        if not intersects:
+            area = rectangle.area()
+            if area > largest_area:
+                largest_area = area
+                largest_i = i
+                largest_j = j
+print(largest_area)
+print(f"Largest rectangle between points {largest_i} and {largest_j}: {Rectangle2D(points[largest_i], points[largest_j])}")
