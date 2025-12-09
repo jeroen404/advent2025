@@ -50,6 +50,8 @@ class Line2D:
         self.max_x = max(p1.x, p2.x)
         self.min_y = min(p1.y, p2.y)
         self.max_y = max(p1.y, p2.y)
+    def length(self) -> float:
+        return ((self.p2.x - self.p1.x) ** 2 + (self.p2.y - self.p1.y) ** 2) ** 0.5
     def has_point_inside(self, rectangle) -> bool:
         return not (self.max_x <= rectangle.bottom_left.x or
                     self.min_x >= rectangle.top_right.x or
@@ -99,6 +101,10 @@ for i, point in enumerate(points[:-1]):
     line = Line2D(point, points[i+1])
     lines.append(line)
 lines.append(Line2D(points[-1], points[0]))
+
+# sort lines by length descending
+# makes them intersect faster
+lines.sort(key=lambda l: l.length(), reverse=True)
 
 largest_area = 0
 
