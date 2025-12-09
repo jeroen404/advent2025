@@ -9,6 +9,26 @@ class Point2D:
         width = abs(self.x - other.x) + 1 # fat lines
         height = abs(self.y - other.y) + 1
         return width * height
+    def inside_polygon(self, polygon: list['Point2D']) -> bool:
+        # ray-casting algorithm
+        n = len(polygon)
+        inside = False
+        x = self.x
+        y = self.y
+        p1x = polygon[0].x
+        p1y = polygon[0].y
+        for i in range(n + 1):
+            p2x = polygon[i % n].x
+            p2y = polygon[i % n].y
+            if y > min(p1y, p2y):
+                if y <= max(p1y, p2y):
+                    if x <= max(p1x, p2x):
+                        if p1y != p2y:
+                            xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                        if p1x == p2x or x <= xinters:
+                            inside = not inside
+            p1x, p1y = p2x, p2y
+        return inside
     def __eq__(self, other) -> bool:
         return (self.x == other.x) and (self.y == other.y)
     def __hash__(self) -> int:
@@ -46,6 +66,10 @@ class Rectangle2D:
         width = abs(self.top_right.x - self.bottom_left.x) + 1  # fat lines
         height = abs(self.top_right.y - self.bottom_left.y) + 1
         return width * height
+    def center(self) -> Point2D:
+        cx = (self.bottom_left.x + self.top_right.x) // 2
+        cy = (self.bottom_left.y + self.top_right.y) // 2
+        return Point2D(cx, cy)
     def __repr__(self) -> str:
         return f"Rectangle2D({self.bottom_left}, {self.top_right})"
 
@@ -56,7 +80,6 @@ try:
         line = input()
         point = Point2D.from_string(line)
         points.append(point)
-        print(f"Read point: {point}")
 except EOFError:
     pass
 
@@ -78,16 +101,17 @@ for i, point in enumerate(points[:-1]):
     lines.append(line)
 lines.append(Line2D(points[-1], points[0]))
 
-print("Lines:")
-for line in lines:
-    print(line)
-
 largest_area = 0
 largest_i = -1
 largest_j = -1
 for i in range(len(points)):
     for j in range(i + 1, len(points)):
         rectangle = Rectangle2D(points[i], points[j])
+        # Check if rectangle center is inside the polygon
+        # not needed for input but otherwise conclave polygons could cause issues
+        # makes it take twice as long though..
+        if not rectangle.center().inside_polygon(points):
+            continue
         intersects = False
         for line in lines:
             if line.has_point_inside(rectangle):
@@ -100,4 +124,3 @@ for i in range(len(points)):
                 largest_i = i
                 largest_j = j
 print(largest_area)
-print(f"Largest rectangle between points {largest_i} and {largest_j}: {Rectangle2D(points[largest_i], points[largest_j])}")
