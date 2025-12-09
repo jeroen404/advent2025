@@ -9,8 +9,10 @@ class Point2D:
         width = abs(self.x - other.x) + 1 # fat lines
         height = abs(self.y - other.y) + 1
         return width * height
+    # not needed for input but for theoretical correctness
     def inside_polygon(self, polygon: list['Point2D']) -> bool:
         # ray-casting algorithm
+        # definitely not stolen 
         n = len(polygon)
         inside = False
         x = self.x
