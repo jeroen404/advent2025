@@ -32,6 +32,7 @@ class Point2D:
                             inside = not inside
             p1x, p1y = p2x, p2y
         return inside
+    
     def __eq__(self, other) -> bool:
         return (self.x == other.x) and (self.y == other.y)
     def __hash__(self) -> int:
@@ -97,10 +98,14 @@ for i in range(len(points)):
 print(largest_area)
 
 # part 2
+
+
+
 lines = []
 for i, point in enumerate(points[:-1]):
     line = Line2D(point, points[i+1])
     lines.append(line)
+# close the polygon
 lines.append(Line2D(points[-1], points[0]))
 
 # sort lines by length descending
@@ -121,12 +126,14 @@ for i in range(len(points)):
             if line.has_point_inside(rectangle):
                 intersects = True
                 break
+        if intersects:
+            continue
         # Check if rectangle center is inside the polygon
         # not needed for input but otherwise conclave polygons could cause issues
-        # makes it take twice as long though..
         if not rectangle.center().inside_polygon(points):
             continue
         if not intersects:
             if area > largest_area:
                 largest_area = area
 print(largest_area)
+
